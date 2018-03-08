@@ -1,0 +1,32 @@
+version: '3'
+services:
+  database:
+    image: centos/postgresql-96-centos7
+    environment:
+      - POSTGRESQL_USER=hackmd
+      - POSTGRESQL_PASSWORD=hackmdpass
+      - POSTGRESQL_DATABASE=hackmd
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      backend:
+        aliases:
+          - hackmdPostgres
+          - hackmdpostgres
+    restart: always
+  app:
+    build: ./hackmd
+    image: zhrum/hackmd
+    environment:
+      - HMD_DB_URL=postgres://hackmd:hackmdpass@hackmdpostgres:5432/hackmd
+    ports:
+      - "3000:3000"
+    networks:
+      backend:
+    restart: always
+
+networks:
+  backend:
+
+volumes:
+  database:
